@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebCraft: Domina el DOM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== PANTALLA BIENVENIDA ===== -->
+  <div id="screen-welcome" class="screen active">
+    <div class="welcome-bg">
+      <div class="floating-code">
+        <span>&lt;div&gt;</span><span>querySelector</span><span>addEventListener</span>
+        <span>innerHTML</span><span>createElement</span><span>classList</span>
+        <span>getElementById</span><span>style</span><span>function()</span>
+      </div>
+    </div>
+    <div class="welcome-content">
+      <div class="logo-container">
+        <div class="logo-icon">🌐</div>
+        <h1 class="logo-title">WebCraft</h1>
+        <h2 class="logo-subtitle">Domina el DOM</h2>
+      </div>
+      <p class="welcome-desc">Aprende JavaScript construyendo aplicaciones web reales.<br>¡Domina el DOM nivel por nivel!</p>
+      <div class="welcome-form">
+        <input type="text" id="player-name-input" placeholder="Tu nombre, desarrollador..." maxlength="20" autocomplete="off">
+        <button id="btn-start" class="btn-primary">
+          <span>Comenzar Aventura</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <!-- <button id="btn-open-tutorial" class="btn-tutorial-welcome">
+          📚 Ver Tutorial antes de jugar
+        </button> -->.
+        
+      </div>
+      <div class="welcome-stats">
+        <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">Niveles</div></div>
+        <div class="stat-card"><div class="stat-num">16</div><div class="stat-label">Retos</div></div>
+        <div class="stat-card"><div class="stat-num">8</div><div class="stat-label">Logros</div></div>
+        <div class="stat-card"><div class="stat-num">⚡</div><div class="stat-label">Tiempo real</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PANTALLA MAPA ===== -->
+  <div id="screen-map" class="screen">
+    <header class="game-header">
+      <div class="hdr-left">
+        <span id="player-display" class="player-badge">👤 Jugador</span>
+      </div>
+      <div class="hdr-center">
+        <h2 class="hdr-title">🗺️ Mapa de Misiones</h2>
+      </div>
+      <div class="hdr-right">
+        <!-- <button id="btn-map-tutorial" class="btn-nav">📚 Tutorial</button> -->
+        <div class="points-badge">⭐ <span id="total-points">0</span> pts</div>
+      </div>
+    </header>
+    <div id="level-map" class="level-map"></div>
+  </div>
+
+  <!-- ===== PANTALLA RETO ===== -->
+  <div id="screen-challenge" class="screen">
+    <header class="game-header">
+      <div class="hdr-left">
+        <button id="btn-back-map" class="btn-nav">← Mapa</button>
+        <span id="challenge-badge" class="challenge-badge"></span>
+      </div>
+      <div class="hdr-center">
+        <span id="challenge-title" class="challenge-title-hdr"></span>
+      </div>
+      <div class="hdr-right">
+        <div class="points-badge">⭐ <span id="challenge-pts">0</span> pts</div>
+        <div id="timer-wrap" class="timer-wrap hidden">⏱️ <span id="timer-display">00:00</span></div>
+      </div>
+    </header>
+
+    <div class="challenge-layout">
+
+      <!-- Panel Misión -->
+      <div class="panel panel-mission">
+        <div class="panel-hdr">
+          <h3>📋 Misión</h3>
+          <span id="challenge-progress" class="progress-badge"></span>
+        </div>
+        <div class="panel-body">
+          <div class="mentor-bubble">
+            <div class="mentor-avatar">🧑‍💻</div>
+            <div class="mentor-text">
+              <div class="mentor-name">CodeMaster</div>
+              <div id="mission-text" class="mission-text"></div>
+            </div>
+          </div>
+          <div class="objective-box">
+            <div class="objective-label">🎯 Objetivo</div>
+            <div id="objective-text" class="objective-text"></div>
+          </div>
+          <div id="hints-section" class="hints-section hidden">
+            <div class="hints-label">💡 Pistas desbloqueadas:</div>
+            <div id="hints-list" class="hints-list"></div>
+          </div>
+          <div class="mission-btns">
+            <button id="btn-hint" class="btn-hint">💡 Pista <span class="hint-cost">(-5 pts)</span></button>
+            <button id="btn-verify" class="btn-verify">✅ Verificar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel Editor -->
+      <div class="panel panel-editor">
+        <div class="panel-hdr editor-hdr">
+          <h3>💻 Editor</h3>
+          <div class="editor-tabs">
+            <button class="tab-btn active" data-tab="js">JS</button>
+            <button class="tab-btn" data-tab="html">HTML</button>
+            <button class="tab-btn" data-tab="css">CSS</button>
+          </div>
+        </div>
+        <div class="panel-body editor-body">
+          <div class="editor-wrap">
+            <div id="line-numbers" class="line-numbers">1</div>
+            <div class="editor-code-area">
+              <pre id="code-highlight" class="code-highlight" aria-hidden="true"></pre>
+              <textarea id="code-editor" class="code-editor" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+            </div>
+          </div>
+          <div class="editor-toolbar">
+            <span id="editor-msg" class="editor-msg"></span>
+            <button id="btn-reset-code" class="btn-sm">↺ Reset</button>
+            <button id="btn-run" class="btn-run">▶ Ejecutar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel Preview -->
+      <div class="panel panel-preview">
+        <div class="panel-hdr">
+          <h3>👁️ Vista Previa</h3>
+          <div class="preview-controls">
+            <span id="preview-status" class="preview-status"></span>
+          </div>
+        </div>
+        <div class="panel-body preview-body">
+          <iframe id="preview-frame" class="preview-frame" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== MODAL VICTORIA ===== -->
+  <div id="modal-victory" class="modal-overlay hidden">
+    <div class="modal-box victory-box">
+      <div class="modal-confetti">🎉🎊✨🎉🎊✨</div>
+      <h2>¡Misión Completada!</h2>
+      <p id="victory-msg" class="victory-msg"></p>
+      <div class="points-earned">
+        <span id="victory-pts" class="pts-badge">+10 pts</span>
+        <span id="victory-bonus" class="bonus-badge hidden">+5 pts bonus (sin pistas)</span>
+      </div>
+      <div id="achievement-pop" class="achievement-pop hidden">
+        <span class="ach-icon">🏅</span>
+        <span id="ach-text"></span>
+      </div>
+      <button id="btn-next" class="btn-primary">Siguiente Reto →</button>
+    </div>
+  </div>
+
+  <!-- ===== MODAL ERROR ===== -->
+  <div id="modal-error" class="modal-overlay hidden">
+    <div class="modal-box error-box">
+      <div class="modal-emoji">🤔</div>
+      <h2>¡Casi lo logras!</h2>
+      <p id="error-msg" class="error-msg"></p>
+      <button id="btn-error-close" class="btn-secondary">Seguir intentando</button>
+    </div>
+  </div>
+
+  <!-- ===== MODAL NIVEL COMPLETO ===== -->
+  <div id="modal-level-done" class="modal-overlay hidden">
+    <div class="modal-box level-done-box">
+      <div class="modal-emoji">🏆</div>
+      <h2 id="level-done-title">¡Nivel Completado!</h2>
+      <p id="level-done-msg"></p>
+      <div class="stars-row">⭐⭐⭐</div>
+      <div class="modal-actions">
+        <button id="btn-next-level" class="btn-primary">Siguiente Nivel →</button>
+        <button id="btn-to-map" class="btn-secondary">Ver Mapa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL LOGRO ===== -->
+  <div id="toast-achievement" class="toast-achievement hidden">
+    <div class="toast-inner">
+      <span class="toast-icon">🏅</span>
+      <div class="toast-text">
+        <div class="toast-title">¡Logro Desbloqueado!</div>
+        <div id="toast-ach-name" class="toast-name"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PANTALLA TUTORIAL ===== -->
+  <div id="screen-tutorial" class="screen">
+    <header class="game-header">
+      <div class="hdr-left">
+        <button id="btn-tutorial-back" class="btn-nav">← Inicio</button>
+      </div>
+      <div class="hdr-center">
+        <h2 class="hdr-title">📚 Tutorial WebCraft</h2>
+      </div>
+      <div class="hdr-right">
+        <span class="tut-badge">12 temas</span>
+      </div>
+    </header>
+    <div class="tutorial-layout">
+
+      <!-- Sidebar -->
+      <aside class="tut-sidebar">
+        <div id="tut-topic-list" class="tut-topic-list"></div>
+      </aside>
+
+      <!-- Contenido principal -->
+      <main class="tut-main">
+        <!-- Portada cuando no hay tema seleccionado -->
+        <div id="tut-home" class="tut-home">
+          <div class="tut-home-icon">📚</div>
+          <h2>Bienvenido al Tutorial</h2>
+          <p>Selecciona un tema del menú izquierdo para comenzar a aprender.<br>
+          Cada tema incluye explicación, sintaxis y una <strong>demo interactiva en vivo</strong>.</p>
+          <div class="tut-home-grid">
+            <div class="tut-home-card"><span>🖱️</span><p>Eventos</p></div>
+            <div class="tut-home-card"><span>🏗️</span><p>DOM</p></div>
+            <div class="tut-home-card"><span>🎨</span><p>Estilos</p></div>
+            <div class="tut-home-card"><span>⚡</span><p>Lógica</p></div>
+            <div class="tut-home-card"><span>✨</span><p>Animaciones</p></div>
+            <div class="tut-home-card"><span>🚀</span><p>Componentes</p></div>
+          </div>
+        </div>
+
+        <!-- Contenido del tema seleccionado -->
+        <div id="tut-content" class="tut-content hidden">
+          <div class="tut-topic-header">
+            <div id="tut-topic-icon" class="tut-topic-icon"></div>
+            <div>
+              <h2 id="tut-topic-name"></h2>
+              <p id="tut-topic-tagline" class="tut-tagline"></p>
+            </div>
+          </div>
+
+          <!-- ¿Qué es? -->
+          <section class="tut-section">
+            <h3 class="tut-section-title">📖 ¿Qué es?</h3>
+            <div id="tut-whatis" class="tut-whatis"></div>
+          </section>
+
+          <!-- Sintaxis -->
+          <section class="tut-section">
+            <h3 class="tut-section-title">💻 Sintaxis</h3>
+            <div id="tut-syntax-tabs" class="tut-syntax-tabs"></div>
+            <div id="tut-syntax-blocks" class="tut-syntax-blocks"></div>
+          </section>
+
+          <!-- Demo en vivo -->
+          <section class="tut-section">
+            <h3 class="tut-section-title">🎮 Demo en vivo <span class="live-badge">INTERACTIVO</span></h3>
+            <div class="tut-demo-wrap">
+              <div id="tut-demo-result" class="tut-demo-result"></div>
+              <div class="tut-demo-code-wrap">
+                <div class="tut-demo-code-label">Código activo</div>
+                <pre id="tut-demo-code" class="tut-demo-code code-highlight"></pre>
+              </div>
+            </div>
+          </section>
+
+          <!-- Formas de uso -->
+          <section class="tut-section">
+            <h3 class="tut-section-title">🔁 Otras formas de usarlo</h3>
+            <div id="tut-variations" class="tut-variations"></div>
+          </section>
+
+          <!-- Navegación entre temas -->
+          <div class="tut-nav-btns">
+            <button id="tut-btn-prev" class="btn-secondary">← Anterior</button>
+            <button id="tut-btn-next" class="btn-primary" style="width:auto;padding:10px 24px;">Siguiente →</button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/levels.js"></script>
+  <script src="js/tutorial.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
